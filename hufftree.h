@@ -13,10 +13,17 @@ typedef struct S_Tree {
     int nleafs_number;
 } Tree;
 
-typedef struct S_Table {
+typedef struct S_TableData {
     char c;
     int code;
+} TableData;
+
+// Tabela com metadados (size)
+typedef struct S_Table {
+    TableData *table;
+    int size; 
 } Table;
+
 
 
 Tree* create_tree(int* frequencies, int size);
@@ -26,7 +33,7 @@ void deallocate_tree(Tree* tree);
 void deallocate_node(Node* root);
 
 Table* create_table(Tree* tree);
-int recursive_table(Node* root, Table* table, int code, int *counter);
-void print_table(Table* table, int tabsize);
+int recursive_table(Node* root, TableData* table, int code, int *counter);
+void print_table(Table* table);
 
 #endif

@@ -27,6 +27,6 @@ int main(int argc, char *argv[]) {
 	}
     Tree *tree = create_tree(alphabet, ALPHABET_SIZE);
     Table *table = create_table(tree);
-    print_table(table, tree->nleafs_number);
+    print_table(table);
     deallocate_tree(tree);
 }

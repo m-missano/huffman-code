@@ -77,16 +77,18 @@ void deallocate_node(Node* root) {
 // Função para criar a tabela
 Table* create_table(Tree* tree) {
     int counter = 0;
-    Table* table = (Table*) malloc(sizeof(Table) * tree->nleafs_number);
-    if(recursive_table(tree->root, table, 1, &counter) == -1){
+    Table* meta_table = (Table*) malloc(sizeof(Table));
+    meta_table->table = (TableData*) malloc(sizeof(TableData) * tree->nleafs_number);
+    meta_table->size = tree->nleafs_number;
+    if(recursive_table(tree->root, (meta_table->table), 1, &counter) == -1){
         fprintf(stderr, "Err: code table overflow\n");
         return NULL;
     }
-    return table;
+    return meta_table;
 }
 
 // Funcao para cdificar cada elemento da tabela
-int recursive_table(Node* root, Table* table, int code, int *counter) {
+int recursive_table(Node* root, TableData* table, int code, int *counter) {
     if(pow(2, 31) < code) {
         return -1;
     }
@@ -104,9 +106,9 @@ int recursive_table(Node* root, Table* table, int code, int *counter) {
 }
 
 // Funcao para printar a tabela
-void print_table(Table* table, int tabsize){
-    for(int i=0; i<tabsize; i++){
-        fprintf(stdout, "%c : %s : %d", table[i].c, intToBinstr(table[i].code), table[i].code);
-        fprintf(stdout, " : %f\n", floor(log2(table[i].code)));
+void print_table(Table* table){
+    for(int i=0; i<table->size; i++){
+        fprintf(stdout, "%c : %s : %d", table->table[i].c, intToBinstr( table->table[i].code),  table->table[i].code);
+        fprintf(stdout, " : %f\n", floor(log2( table->table[i].code)));
     }
 }
