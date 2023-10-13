@@ -16,6 +16,7 @@ void ler_arquivo(char file_name[256]) {
 	}
 }
 
+
 int main(int argc, char *argv[]) {
 	char file_name[256];
 	if (argc == 2) {

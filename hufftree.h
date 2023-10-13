@@ -27,11 +27,6 @@ typedef struct S_Table {
     int size; 
 } Table;
 
-// buffer de escrita
-unsigned short int  wbuffer[BUFFSIZE];
-// buffer de leitura
-//unsigned short int  rbuffer[BUFFSIZE];
-
 Tree* create_tree(int* frequencies, int size);
 Node* create_node(int freq, char c, Node *left, Node *right);
 void inorder_traversal(Node* root);
@@ -39,7 +34,7 @@ void deallocate_tree(Tree* tree);
 void deallocate_node(Node* root);
 
 Table* create_table(Tree* tree);
-int recursive_table(Node* root, TableData* table, int code, int *counter, int *depth)
+int recursive_table(Node* root, TableData* table, int code, int *counter, int *depth);
 void print_table(Table* table);
 
 #endif
