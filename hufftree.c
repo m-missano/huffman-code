@@ -115,10 +115,10 @@ void print_table(Table* table){
     char *bitstr;
     for(int i=0; i<table->size; i++) {
         fprintf(stdout, "%c : ", table->table[i].c); 
-        //bitstr = intToBinstr(table->table[i].code);
-        // for(int j=((int)sizeof(int)*8-table->table[i].code_size); j<((int)sizeof(int)*8); j++) {
-        //     fprintf(stdout, "%c", bitstr[j]);
-        // }
+        bitstr = intToBinstr(table->table[i].code);
+        for(int j=((int)sizeof(int)*8-table->table[i].code_size); j<((int)sizeof(int)*8); j++) {
+            fprintf(stdout, "%c", bitstr[j]);
+        }
         fprintf(stdout, "\n");
     }
 }

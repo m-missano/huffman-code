@@ -36,5 +36,6 @@ void deallocate_node(Node* root);
 Table* create_table(Tree* tree);
 int recursive_table(Node* root, TableData* table, int code, int *counter, int depth);
 void print_table(Table* table);
+void deallocate_table(Table* table);
 
 #endif

@@ -26,12 +26,13 @@ int main(int argc, char *argv[]) {
 		printf("Erro: Forneça o nome do arquivo como argumento.\n");
 		return 1; // Retorne um codigo de erro
 	}
+    
+	
 	FILE* fin= fopen(argv[1],"r");
 	FILE* fout= fopen("output.huffman","w");
-    Tree *tree = create_tree(alphabet, ALPHABET_SIZE);
+	Tree *tree = create_tree(alphabet, ALPHABET_SIZE);
     Table *table = create_table(tree);
     print_table(table);
 	write_char_on_file(fout,fin,table);
     deallocate_tree(tree);
-
 }
