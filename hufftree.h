@@ -19,6 +19,7 @@ typedef struct S_TableData {
     char c;
     int code;
     int code_size;
+    int freq;
 } TableData;
 
 // Tabela com metadados (size)

@@ -6,8 +6,6 @@
 #include <math.h>
 #include <string.h>
 
-unsigned short int  wbuffer[BUFFSIZE];
-
 // Funcao para criar a arvore de huffman
 Tree* create_tree(int* frequencies, int size) {
     PQueue* pqueue = createPriorityQueue();
@@ -115,37 +113,63 @@ void print_table(Table* table){
     char *bitstr;
     for(int i=0; i<table->size; i++) {
         fprintf(stdout, "%c : ", table->table[i].c); 
-        bitstr = intToBinstr(table->table[i].code);
-        for(int j=((int)sizeof(int)*8-table->table[i].code_size); j<((int)sizeof(int)*8); j++) {
-            fprintf(stdout, "%c", bitstr[j]);
-        }
+        bitstr = intToBinstr(table->table[i].code, table->table[i].code_size);
+        fprintf(stdout, " %s", bitstr);
         fprintf(stdout, "\n");
     }
 }
 
 
-// Função para
-int encode(FILE* fp_in, FILE* fp_out, Table* table) {
+// Função para criar a tabela
+Table* recreate_table(FILE *fp_table) {
     char caractere;
-    unsigned short int aux=0;
+    int number, i = 0;
+    Table* meta_table = (Table*) malloc(sizeof(Table));
 
-    int bits_counter = 0;
+    if (fscanf(fp_table, "%d", &meta_table->size) != 1) {
+		printf("Erro na leitura da tabela huffman.\n");
+		exit(1);
+	}
+    
+    meta_table->table = (TableData*) malloc(sizeof(TableData) * meta_table->size);
 
-	rewind(fp_in);
-	while ((caractere = fgetc(fp_in)) != EOF) {
-		
-        for (int i = 0; i < table->size; i++) {
-			if (table->table[i].c == caractere) {
-                bits_counter += table->table[i].code_size;
-                if(bits_counter >= sizeof(unsigned short int)){
-                    
-                } else {
-                    //aux = aux << (table->table[i].code_size);
-                }
-                
-				//fputs(table->table[i].code, fp_out);
+	while ((meta_table->table[i].c = fgetc(fp_table)) != EOF) {
+        fread(&meta_table->table[i].code, sizeof(int), 1, fp_table);
+		fread(&meta_table->table[i].code_size, sizeof(int), 1, fp_table);
+        fgetc(fp_table);
+		i++;
+	}
+    return meta_table;
+}
+
+void decode(FILE *fp_in, FILE *fp_table) {
+    Table* table = recreate_table(fp_table);
+	char caractere;
+	int i = 0, contador=0;;
+    char buffer[BUFFSIZE];
+
+	if (fp_in != NULL){
+		int contador=0;
+		char codiguin[sizeof(int)*8];
+		while ((caractere = fgetc(fp_in)) != EOF) {
+			for(int k=0; k<sizeof(char); k++){
+				if(caractere%2 == 0){
+					codiguin[contador] = "0";
+				}
+				else{
+					codiguin[contador] = "1";
+				}
+				contador++;
+				caractere = caractere >> 1;
+				codiguin[contador]='\0';
+				for(int i =0;i<table->size;i++) {
+					if(strcmp(codiguin,intToBinstr(table->table[i].code, table->table[i].code_size))==0){
+						printf("%c",table->table[i].c);
+						contador=0;
+						break;
+					}	
+				}
 			}
 		}
-
 	}
 }
