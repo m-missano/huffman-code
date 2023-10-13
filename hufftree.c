@@ -123,7 +123,7 @@ void print_table(Table* table){
     }
 }
 
-/*
+
 // Função para
 int encode(FILE* fp_in, FILE* fp_out, Table* table) {
     char caractere;
@@ -149,4 +149,3 @@ int encode(FILE* fp_in, FILE* fp_out, Table* table) {
 
 	}
 }
-*/
