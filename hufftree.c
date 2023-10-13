@@ -79,11 +79,11 @@ void deallocate_node(Node* root) {
 
 // Função para criar a tabela
 Table* create_table(Tree* tree) {
-    int counter = 0, depth = 0;
+    int counter = 0;
     Table* meta_table = (Table*) malloc(sizeof(Table));
     meta_table->table = (TableData*) malloc(sizeof(TableData) * tree->nleafs_number);
     meta_table->size = tree->nleafs_number;
-    if(recursive_table(tree->root, (meta_table->table), 0, &counter, &depth) == -1){
+    if(recursive_table(tree->root, (meta_table->table), 0, &counter, 0) == -1){
         fprintf(stderr, "Err: code table overflow\n");
         return NULL;
     }
@@ -91,21 +91,21 @@ Table* create_table(Tree* tree) {
 }
 
 // Funcao para cdificar cada elemento da tabela
-int recursive_table(Node* root, TableData* table, int code, int *counter, int *depth) {
+int recursive_table(Node* root, TableData* table, int code, int *counter, int depth) {
     if(pow(2, 32)-1 < code) {
         return -1;
     }
     if (root->left == NULL && root->right == NULL) {
         table[*counter].c = root->c;
-        table[*counter].code_size = *depth;
+        table[*counter].code = code;
+        table[*counter].code_size = depth;
         (*counter)++;
         return 0;
     }
 
-    *depth = *depth + 1;
-    if(recursive_table(root->left, table, (code << 1), counter, depth) == -1)
+    if(recursive_table(root->left, table, (code << 1), counter, depth+1) == -1)
         return -1;
-    if(recursive_table(root->right, table, ((code << 1) | 1), counter, depth) == -1)
+    if(recursive_table(root->right, table, ((code << 1) | 1), counter, depth+1) == -1)
         return -1;
     return 0;
 }
@@ -113,12 +113,13 @@ int recursive_table(Node* root, TableData* table, int code, int *counter, int *d
 // Funcao para printar a tabela
 void print_table(Table* table){
     char *bitstr;
-    for(int i=0; i<table->size; i++){
+    for(int i=0; i<table->size; i++) {
         fprintf(stdout, "%c : ", table->table[i].c); 
         bitstr = intToBinstr(table->table[i].code);
-        /*for(int j=0; j<32; j++) {
+        for(int j=((int)sizeof(int)*8-table->table[i].code_size); j<((int)sizeof(int)*8); j++) {
             fprintf(stdout, "%c", bitstr[j]);
-        }*/
+        }
+        fprintf(stdout, "\n");
     }
 }
 
