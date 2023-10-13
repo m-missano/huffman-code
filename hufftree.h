@@ -18,13 +18,15 @@ typedef struct S_Table {
     int code;
 } Table;
 
-Node* create_node(int freq, char c, Node *left, Node *right);
+
 Tree* create_tree(int* frequencies, int size);
+Node* create_node(int freq, char c, Node *left, Node *right);
 void inorder_traversal(Node* root);
+void deallocate_tree(Tree* tree);
+void deallocate_node(Node* root);
+
 Table* create_table(Tree* tree);
 int recursive_table(Node* root, Table* table, int code, int *counter);
 void print_table(Table* table, int tabsize);
-void deallocate_tree(Tree* tree);
-void deallocate_node(Node* root);
 
 #endif

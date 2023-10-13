@@ -5,6 +5,34 @@
 #include <stdlib.h>
 #include <math.h>
 
+// Funcao para criar a arvore de huffman
+Tree* create_tree(int* frequencies, int size) {
+    PQueue* pqueue = createPriorityQueue();
+    Tree* tree = (Tree*)malloc(sizeof(Tree));
+    tree->nleafs_number = 0;
+
+    // Cria os nos folha
+    for(int i=0; i<size; i++){
+        if(frequencies[i] != 0){
+            Node *item = create_node(frequencies[i], i, NULL, NULL);
+            tree->nleafs_number++;
+            enqueue(pqueue, item, frequencies[i]);
+        }
+    }
+
+    // Cria o restante dos nos
+    while (!isEmpty(pqueue)) {
+        Node *left = dequeue(pqueue);
+        Node *right = dequeue(pqueue);
+        tree->root = create_node(0, '\0', left, right);
+        if(!isEmpty(pqueue))
+            enqueue(pqueue, tree->root, tree->root->freq);
+    }
+    free(pqueue);
+    //read_inorder(tree->root);
+    return tree;
+}
+
 // Funcao para criar o no da arvore
 Node* create_node(int freq, char c, Node *left, Node *right) {
     Node* new_node = (Node*)malloc(sizeof(Node));
@@ -28,6 +56,22 @@ void read_inorder(Node* root) {
         printf("%c:%d ", root->c, root->freq);
         read_inorder(root->right);
     }
+}
+
+// Funcao para desalocar a arvore de huffman
+void deallocate_tree(Tree* tree) {
+   deallocate_node(tree->root);
+   free(tree);
+}
+
+// Funcao para desalocar os nos da arvore de huffman
+void deallocate_node(Node* root) {
+    if (root == NULL) {
+        return;
+    }
+    deallocate_node(root->left);
+    deallocate_node(root->right);
+    free(root);
 }
 
 // Função para criar a tabela
@@ -65,49 +109,4 @@ void print_table(Table* table, int tabsize){
         fprintf(stdout, "%c : %s : %d", table[i].c, intToBinstr(table[i].code), table[i].code);
         fprintf(stdout, " : %f\n", floor(log2(table[i].code)));
     }
-}
-
-// Funcao para criar a arvore de huffman
-Tree* create_tree(int* frequencies, int size) {
-    PQueue* pqueue = createPriorityQueue();
-    Tree* tree = (Tree*)malloc(sizeof(Tree));
-    tree->nleafs_number = 0;
-
-    // Cria os nos folha
-    for(int i=0; i<size; i++){
-        if(frequencies[i] != 0){
-            Node *item = create_node(frequencies[i], i, NULL, NULL);
-            tree->nleafs_number++;
-            enqueue(pqueue, item, frequencies[i]);
-        }
-    }
-
-    // Cria o restante dos nos
-    while (!isEmpty(pqueue)) {
-        Node *left = dequeue(pqueue);
-        Node *right = dequeue(pqueue);
-        tree->root = create_node(0, '\0', left, right);
-        if(!isEmpty(pqueue))
-            enqueue(pqueue, tree->root, tree->root->freq);
-    }
-
-    free(pqueue);
-    //read_inorder(tree->root);
-    return tree;
-}
-
-// Funcao para desalocar a arvore de huffman
-void deallocate_tree(Tree* tree) {
-   deallocate_node(tree->root);
-   free(tree);
-}
-
-// Funcao para desalocar os nos da arvore de huffman
-void deallocate_node(Node* root) {
-    if (root == NULL) {
-        return;
-    }
-    deallocate_node(root->left);
-    deallocate_node(root->right);
-    free(root);
 }
