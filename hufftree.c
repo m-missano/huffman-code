@@ -76,11 +76,11 @@ void deallocate_node(Node* root) {
 
 // Função para criar a tabela
 Table* create_table(Tree* tree) {
-    int counter = 0;
+    int counter = 0, depth = 0;
     Table* meta_table = (Table*) malloc(sizeof(Table));
     meta_table->table = (TableData*) malloc(sizeof(TableData) * tree->nleafs_number);
     meta_table->size = tree->nleafs_number;
-    if(recursive_table(tree->root, (meta_table->table), 1, &counter) == -1){
+    if(recursive_table(tree->root, (meta_table->table), 0, &counter, &depth) == -1){
         fprintf(stderr, "Err: code table overflow\n");
         return NULL;
     }
@@ -88,27 +88,59 @@ Table* create_table(Tree* tree) {
 }
 
 // Funcao para cdificar cada elemento da tabela
-int recursive_table(Node* root, TableData* table, int code, int *counter) {
-    if(pow(2, 31) < code) {
+int recursive_table(Node* root, TableData* table, int code, int *counter, int *depth) {
+    if(pow(2, 32)-1 < code) {
         return -1;
     }
     if (root->left == NULL && root->right == NULL) {
         table[*counter].c = root->c;
         table[*counter].code = code;
+        table[*counter].code_size = *depth;
         (*counter)++;
         return 0;
     }
-    if(recursive_table(root->left, table, (code << 1), counter) == -1)
+    if(recursive_table(root->left, table, (code << 1), counter, ++(*depth)) == -1)
         return -1;
-    if(recursive_table(root->right, table, ((code << 1) | 1), counter) == -1)
+    if(recursive_table(root->right, table, ((code << 1) | 1), counter, ++(*depth)) == -1)
         return -1;
     return 0;
 }
 
 // Funcao para printar a tabela
 void print_table(Table* table){
+    char *bitstr;
     for(int i=0; i<table->size; i++){
-        fprintf(stdout, "%c : %s : %d", table->table[i].c, intToBinstr( table->table[i].code),  table->table[i].code);
+        fprintf(stdout, "%c : ", table->table[i].c); 
+        bitstr = intToBinstr(table->table[i].code),  table->table[i].code);
+        for(int j=0; j<table->table[i].code_size; j++) {
+            fprintf(stdout, "%c", bitstr[sizeof(int)-strlen(bitstr)+j]);
+        }
         fprintf(stdout, " : %f\n", floor(log2( table->table[i].code)));
     }
+}
+
+// Função para
+int encode(FILE* fp_in, FILE* fp_out, Table* table) {
+    char caractere;
+    unsigned short int aux=0;
+
+    int bits_counter = 0;
+
+	rewind(fp_in);
+	while ((caractere = fgetc(fp_in)) != EOF) {
+		
+        for (int i = 0; i < table->size; i++) {
+			if (table->table[i].c == caractere) {
+                bits_counter += table->table[i].code_size;
+                if(bits_counter >= sizeof(unsigned short int)){
+                    
+                } else {
+                    aux = aux << (table->table[i].code_size);
+                }
+                
+				//fputs(table->table[i].code, fp_out);
+			}
+		}
+
+	}
 }

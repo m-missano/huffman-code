@@ -1,6 +1,8 @@
 #ifndef HTREE_H
 #define HTREE_H
 
+#define BUFFSIZE 1024
+
 typedef struct S_Node {
     struct S_Node *left;
     struct S_Node *right;
@@ -16,6 +18,7 @@ typedef struct S_Tree {
 typedef struct S_TableData {
     char c;
     int code;
+    int code_size;
 } TableData;
 
 // Tabela com metadados (size)
@@ -24,7 +27,10 @@ typedef struct S_Table {
     int size; 
 } Table;
 
-
+// buffer de escrita
+unsigned short int  wbuffer[BUFFSIZE];
+// buffer de leitura
+//unsigned short int  rbuffer[BUFFSIZE];
 
 Tree* create_tree(int* frequencies, int size);
 Node* create_node(int freq, char c, Node *left, Node *right);
@@ -33,7 +39,7 @@ void deallocate_tree(Tree* tree);
 void deallocate_node(Node* root);
 
 Table* create_table(Tree* tree);
-int recursive_table(Node* root, TableData* table, int code, int *counter);
+int recursive_table(Node* root, TableData* table, int code, int *counter, int *depth)
 void print_table(Table* table);
 
 #endif

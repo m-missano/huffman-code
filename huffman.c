@@ -29,4 +29,5 @@ int main(int argc, char *argv[]) {
     Table *table = create_table(tree);
     print_table(table);
     deallocate_tree(tree);
+
 }
