@@ -4,17 +4,15 @@
 #include "hufftree.h"
 
 // Funcao para converter um valor int em binstr -> string no formato bin do int
-char *intToBinstr(int num)
-{
+char* intToBinstr(int num, int size) {
     // Determina o número de bits do int
-    int size = sizeof(num) * 8;
+    //int size = sizeof(num) * 8; 
+    
+    char* binstr = (char*) malloc(size);
 
-    char *binstr = (char *)malloc(size);
-
-    for (int i = size - 1; i >= 0; i--)
-    {
+    for (int i = size - 1; i >= 0; i--) {
         // Obtem o i-esimo bit do int e converte para string
-        sprintf(binstr + size - i - 1, "%d", (num >> i) & 1);
+        sprintf(binstr+size-i-1, "%d", (num >> i) & 1); 
     }
     binstr[size] = '\0';
     return binstr;
@@ -26,12 +24,14 @@ void write_char_on_file(FILE *fout, FILE *fin, Table *tab)
     int cont = 0;
     int k = 0;
     rewind(fin);
+    for (int i = 0; i < tab->size; i++)
+        fprintf(fout,"%c%d%d|",tab->table[i].c,tab->table[i].code,tab->table[i].code_size);
     while ((caractere = fgetc(fin)) != EOF)
     {
         for (int i = 0; i < tab->size; i++)
             if (caractere == tab->table[i].c)
             {
-                char *code = intToBinstr(tab->table[i].code);
+                char *code = intToBinstr(tab->table[i].code, tab->table[i].code_size);
                 for (int i = 0; i < strlen(code); i++)
                 {
                     if (code[i] == '1')
@@ -39,6 +39,7 @@ void write_char_on_file(FILE *fout, FILE *fin, Table *tab)
                     else if (code[i] == '0')
                         c = c | (0 << (7 - k)); // shifts 0 to relevant position and OR with the temporary char
                     k++;
+                    cont++;
                 }
             }
         if((cont+1)%8 == 0){
@@ -46,6 +47,5 @@ void write_char_on_file(FILE *fout, FILE *fin, Table *tab)
             fputc(c,fout);
             c=0;
         }
-        cont++;
     }
 }
